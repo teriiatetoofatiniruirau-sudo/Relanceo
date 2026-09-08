@@ -1,4 +1,4 @@
-# Relancéo — micro-SaaS (relances de paiement pour TPE françaises)
+# Tresoléo — micro-SaaS (relances de paiement pour TPE françaises)
 
 Version **web SaaS autonome** (sans Shopify) : comptes, données par utilisateur,
 abonnement Stripe réel, envoi d'emails. Réutilise le moteur et les contenus FR

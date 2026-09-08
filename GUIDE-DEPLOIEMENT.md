@@ -1,4 +1,4 @@
-# 🚀 Mise en ligne — Relancéo (guide pas à pas)
+# 🚀 Mise en ligne — Tresoléo (guide pas à pas)
 
 Deux choses à faire **dans votre navigateur** (je ne peux pas créer vos comptes) :
 1. **GitHub** : héberger le code (gratuit) — le dépôt local est déjà prêt.
