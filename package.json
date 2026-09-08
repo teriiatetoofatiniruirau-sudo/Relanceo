@@ -1,7 +1,7 @@
 {
   "name": "relanceo-saas",
   "version": "0.2.0",
-  "description": "Paylora — micro-SaaS de relances de paiement pour TPE françaises",
+  "description": "Geldio — micro-SaaS de relances de paiement pour TPE françaises",
   "private": true,
   "type": "commonjs",
   "main": "server.js",

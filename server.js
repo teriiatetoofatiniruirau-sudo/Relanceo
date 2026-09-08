@@ -1,5 +1,5 @@
 /**
- * Paylora — micro-SaaS (serveur)
+ * Geldio — micro-SaaS (serveur)
  * Comptes + sessions (cookie signé), facturation Stripe réelle (ou simulation
  * si STRIPE_SECRET_KEY absent), moteur de relances, envoi d'emails (Resend ou outbox).
  */
@@ -357,6 +357,6 @@ app.get('/', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.ht
 app.get('/app', (req, res) => res.sendFile(path.join(__dirname, 'public', 'app.html')));
 
 app.listen(PORT, () => {
-  console.log(`✅ Paylora (micro-SaaS) → ${BASE_URL}`);
+  console.log(`✅ Geldio (micro-SaaS) → ${BASE_URL}`);
   console.log(`   Stripe : ${stripe ? 'réel' : 'SIMULATION (ajoutez STRIPE_SECRET_KEY)'} · Emails : ${process.env.RESEND_API_KEY ? 'réels' : 'SIMULATION (outbox)'}`);
 });

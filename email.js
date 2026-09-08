@@ -27,7 +27,7 @@ async function sendEmail({ to, subject, body, company }) {
   const email = { to, subject, body };
   if (apiKey) {
     const resend = new Resend(apiKey);
-    const from = process.env.EMAIL_FROM || 'Paylora <relances@paylora.com>';
+    const from = process.env.EMAIL_FROM || 'Geldio <relances@geldio.com>';
     await resend.emails.send({ from, to, subject, text: body });
     return { sent: true, real: true };
   }
