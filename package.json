@@ -1,0 +1,19 @@
+{
+  "name": "relanceo-saas",
+  "version": "0.2.0",
+  "description": "Relancéo — micro-SaaS de relances de paiement pour TPE françaises",
+  "private": true,
+  "type": "commonjs",
+  "main": "server.js",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.4.5",
+    "express": "^4.19.2",
+    "resend": "^4.0.0",
+    "stripe": "^17.0.0"
+  }
+}

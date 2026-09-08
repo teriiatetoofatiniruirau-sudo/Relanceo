@@ -1,0 +1,7 @@
+# ── Relancéo (micro-SaaS) — fichiers à ignorer ────────────────────────────
+node_modules/
+.env
+data/
+outbox/
+*.log
+.npm-cache/

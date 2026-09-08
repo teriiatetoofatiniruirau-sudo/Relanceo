@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Relancéo — Réclamez vos impayés sans gêne</title>
+<link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<header style="display:flex;justify-content:space-between;align-items:center;padding:16px 24px;max-width:1100px;margin:0 auto">
+  <strong style="font-size:18px">💌 Relancéo</strong>
+  <div style="display:flex;gap:10px;align-items:center">
+    <span id="header-mail" class="hint hidden"></span>
+    <button id="btn-login" class="btn ghost sm">Connexion</button>
+    <a href="/app" class="btn sm hidden" id="btn-open-app">Ouvrir l'app</a>
+  </div>
+</header>
+
+<section style="padding:56px 24px 30px;text-align:center">
+  <h1 style="font-size:36px;margin:0 0 12px;line-height:1.15">Vos clients vous paient en retard.<br><span style="color:var(--brand)">On relance pour vous, poliment.</span></h1>
+  <p style="color:var(--mut);max-width:620px;margin:0 auto 22px">Relancéo écrit et envoie des relances de paiement en français, par paliers — du rappel amical à la dernière relance avant mise en demeure. Vous n'avez plus à avoir honte de réclamer.</p>
+  <a href="/app" class="btn" style="font-size:16px;padding:13px 24px">Essayer gratuitement →</a>
+</section>
+
+<section style="max-width:1100px;margin:0 auto;padding:10px 24px 50px">
+  <div class="grid" style="grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+    <div class="card" style="text-align:center;padding:26px">
+      <div style="font-size:26px">🌱</div><h2 style="margin:8px 0 2px">Découverte</h2>
+      <div style="font-size:26px;font-weight:800">0 €</div><div class="hint">essai 14 jours</div>
+      <ul style="text-align:left;color:var(--mut);line-height:1.9;padding-left:4px;list-style:none">
+        <li>✓ 10 factures</li><li>✓ Relances par paliers</li><li>✓ Ton personnalisable</li>
+      </ul>
+      <button class="btn ghost" data-plan="decouverte">Essayer gratuitement</button>
+    </div>
+    <div class="card" style="text-align:center;padding:26px;border:2px solid var(--brand)">
+      <span class="badge b-green">Populaire</span><h2 style="margin:8px 0 2px">Essentiel</h2>
+      <div style="font-size:26px;font-weight:800">9,99 €<span style="font-size:14px;font-weight:400;color:var(--mut)">/mois</span></div>
+      <ul style="text-align:left;color:var(--mut);line-height:1.9;padding-left:4px;list-style:none">
+        <li>✓ 20 factures</li><li>✓ Envoi réel des emails</li><li>✓ Suivi des encaissements</li>
+      </ul>
+      <button class="btn" data-plan="essentiel">Choisir Essentiel</button>
+    </div>
+    <div class="card" style="text-align:center;padding:26px">
+      <h2 style="margin:8px 0 2px">Pro</h2>
+      <div style="font-size:26px;font-weight:800">19,99 €<span style="font-size:14px;font-weight:400;color:var(--mut)">/mois</span></div>
+      <div class="hint">factures illimitées</div>
+      <ul style="text-align:left;color:var(--mut);line-height:1.9;padding-left:4px;list-style:none">
+        <li>✓ Factures illimitées</li><li>✓ Tous les tons</li><li>✓ Relances multi-étages</li>
+      </ul>
+      <button class="btn ghost" data-plan="pro">Choisir Pro</button>
+    </div>
+  </div>
+</section>
+
+<div id="modal" class="hidden" style="position:fixed;inset:0;background:rgba(15,23,42,.5);display:flex;align-items:center;justify-content:center;z-index:60">
+  <div class="card" style="width:min(400px,92vw)">
+    <h2 id="auth-title" style="margin:0 0 4px">Créer un compte</h2>
+    <p class="hint" style="margin:0 0 14px">14 jours d'essai gratuit, sans carte.</p>
+    <div class="field"><input id="f-company" placeholder="Nom de votre entreprise"></div>
+    <div class="field"><input id="f-email" type="email" placeholder="votre@email.fr"></div>
+    <div class="field"><input id="f-password" type="password" placeholder="Mot de passe (6+ caractères)"></div>
+    <button id="auth-submit" class="btn" style="width:100%">Créer mon compte</button>
+    <p class="hint center" style="margin:12px 0 0">
+      <a href="#" id="auth-toggle">Déjà un compte ? Se connecter</a>
+    </p>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+<script>
+const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll(s));
+let toastT;
+function toast(m,ok){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200);}
+let MODE='signup', pendingPlan=null;
+async function api(p,o={}){const r=await fetch(p,{headers:{'Content-Type':'application/json'},...o});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||r.status);return d;}
+async function refreshHead(){const me=await api('/api/me');if(me.loggedIn){$('#btn-login').classList.add('hidden');$('#header-mail').textContent=me.user.email;$('#header-mail').classList.remove('hidden');$('#btn-open-app').classList.remove('hidden');}else{$('#btn-login').classList.remove('hidden');}}
+function openAuth(){MODE='signup';$('#auth-title').textContent='Créer un compte';$('#auth-submit').textContent='Créer mon compte';$('#auth-toggle').textContent='Déjà un compte ? Se connecter';$('#modal').classList.remove('hidden');}
+$('#btn-login').onclick=()=>{MODE='login';$('#auth-title').textContent='Connexion';$('#auth-submit').textContent='Se connecter';$('#auth-toggle').textContent='Pas de compte ? Créer un compte';$('#modal').classList.remove('hidden');};
+$('#auth-toggle').onclick=e=>{e.preventDefault();if(MODE==='signup'){MODE='login';$('#auth-title').textContent='Connexion';$('#auth-submit').textContent='Se connecter';$('#auth-toggle').textContent='Pas de compte ? Créer un compte';}else{MODE='signup';$('#auth-title').textContent='Créer un compte';$('#auth-submit').textContent='Créer mon compte';$('#auth-toggle').textContent='Déjà un compte ? Se connecter';}};
+$$('[data-plan]').forEach(b=>b.onclick=async()=>{pendingPlan=b.dataset.plan;const me=await api('/api/me');if(!me.loggedIn){openAuth();return;}goPlan(pendingPlan);});
+async function goPlan(plan){if(plan==='decouverte'){toast('Essayez gratuitement pendant 14 jours 🌱','ok');return;}try{const r=await api('/api/checkout',{method:'POST',body:JSON.stringify({plan})});if(r.url)location.href=r.url;else if(r.simulated){toast('✅ '+plan.charAt(0).toUpperCase()+plan.slice(1)+' activé (simulation)','ok');refreshHead();}else toast('Action impossible');}catch(e){toast('❌ '+e.message);}}
+$('#auth-submit').onclick=async()=>{const body={email:$('#f-email').value.trim(),password:$('#f-password').value,company:$('#f-company').value.trim()};try{if(MODE==='signup')await api('/api/signup',{method:'POST',body:JSON.stringify(body)});else await api('/api/login',{method:'POST',body:JSON.stringify(body)});$('#modal').classList.add('hidden');toast('Bienvenue 👋','ok');refreshHead();if(pendingPlan){goPlan(pendingPlan);pendingPlan=null;}}catch(e){toast('❌ '+e.message);}};
+refreshHead();
+</script>
+</body>
+</html>
