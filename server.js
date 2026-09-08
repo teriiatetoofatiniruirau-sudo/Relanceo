@@ -44,8 +44,14 @@ function cookieToken(req) {
   const m = /relanceo_sid=([^;]+)/.exec(req.headers.cookie || '');
   return m ? decodeURIComponent(m[1]) : null;
 }
+function bearerToken(req) {
+  const m = /^Bearer\s+(.+)$/i.exec(req.headers.authorization || '');
+  return m ? m[1] : null;
+}
 function currentUser(req) {
-  const email = verify(cookieToken(req));
+  // Jeton accepté via en-tête Authorization (primaire) ou cookie (repli)
+  const token = bearerToken(req) || cookieToken(req);
+  const email = verify(token);
   return email ? store.getUser(email) : null;
 }
 function setCookie(res, token) {
@@ -186,8 +192,9 @@ app.post('/api/signup', async (req, res) => {
   u.pwHash = bcrypt.hashSync(String(password), 10);
   u.company = String(company || '').trim();
   store.saveUser(u);
-  setCookie(res, sign(em));
-  res.json({ user: publicUser(u) });
+  const token = sign(em);
+  setCookie(res, token);
+  res.json({ user: publicUser(u), token });
 });
 
 app.post('/api/login', (req, res) => {
@@ -197,8 +204,9 @@ app.post('/api/login', (req, res) => {
   if (!u || !bcrypt.compareSync(String(password || ''), u.pwHash)) {
     return res.status(401).json({ error: 'Email ou mot de passe incorrect' });
   }
-  setCookie(res, sign(em));
-  res.json({ user: publicUser(u) });
+  const token = sign(em);
+  setCookie(res, token);
+  res.json({ user: publicUser(u), token });
 });
 
 app.post('/api/logout', (req, res) => { clearCookie(res); res.json({ ok: true }); });

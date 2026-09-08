@@ -1,12 +1,14 @@
 /* app.js — espace de travail Relancéo (SaaS) */
 const $=s=>document.querySelector(s);
 let toastT;function toast(m,ok){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3400);}
-async function api(p,o={}){const r=await fetch(p,{headers:{'Content-Type':'application/json'},...o});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||r.status);return d;}
+const TOKEN_KEY='relanceo_token';
+async function api(p,o={}){const h={'Content-Type':'application/json'};const t=localStorage.getItem(TOKEN_KEY);if(t)h.Authorization='Bearer '+t;const r=await fetch(p,{headers:h,...o});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||r.status);return d;}
 const euro=v=>new Intl.NumberFormat('fr-FR',{style:'currency',currency:'EUR'}).format(Number(v)||0);
 const dFR=s=>{if(!s)return '—';const x=new Date(s);return isNaN(x)?s:new Date(String(s).length===10?s+'T12:00:00':s).toLocaleDateString('fr-FR');};
 
 let DATA=null;
 async function boot(){
+  if(!localStorage.getItem(TOKEN_KEY)){location.href='/';return;}
   try{const me=await api('/api/me');if(!me.loggedIn){location.href='/';return;}}catch{location.href='/';return;}
   await load();
 }
@@ -68,7 +70,7 @@ $('#btn-import').onclick=async()=>{try{const r=await api('/api/invoices/import',
 $('#btn-add').onclick=async()=>{try{await api('/api/invoices',{method:'POST',body:JSON.stringify({numero:$('#m-numero').value,client:$('#m-client').value,email:$('#m-email').value,montant:$('#m-montant').value,date_echeance:$('#m-echeance').value})});toast('Facture ajoutée ➕','ok');await load();$('#m-numero').value=$('#m-montant').value=$('#m-client').value=$('#m-email').value=$('#m-echeance').value='';}catch(x){toast('❌ '+x.message);}};
 $('#btn-generate').onclick=async()=>{try{const r=await api('/api/reminders/generate',{method:'POST',body:'{}'});toast(r.created+' brouillon(s) généré(s) 📝','ok');await load();}catch(x){toast('❌ '+x.message);}};
 $('#btn-save').onclick=async()=>{try{await api('/api/me/settings',{method:'PATCH',body:JSON.stringify({company:$('#s-company').value,sender:$('#s-sender').value,tone:$('#s-tone').value,delays:[$('#s-d1').value,$('#s-d2').value,$('#s-d3').value].map(Number)})});toast('Réglages enregistrés 💾','ok');await load();}catch(x){toast('❌ '+x.message);}};
-$('#btn-logout').onclick=async()=>{await api('/api/logout',{method:'POST',body:'{}'});location.href='/';};
+$('#btn-logout').onclick=()=>{localStorage.removeItem(TOKEN_KEY);location.href='/';};
 $('#btn-portal').onclick=async()=>{try{const r=await api('/api/portal',{method:'POST',body:'{}'});if(r.url)location.href=r.url;else{toast('Gérez votre abonnement sur la page publique','ok');}}catch(x){toast('❌ '+x.message);}};
 
 const SAMPLE_CSV=`numero ; client ; email ; montant ; date_echeance ; statut

@@ -72,14 +72,16 @@ const $=s=>document.querySelector(s), $$=s=>Array.from(document.querySelectorAll
 let toastT;
 function toast(m,ok){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3200);}
 let MODE='signup', pendingPlan=null;
-async function api(p,o={}){const r=await fetch(p,{headers:{'Content-Type':'application/json'},...o});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||r.status);return d;}
+const TOKEN_KEY='relanceo_token';
+function saveToken(t){ if(t) localStorage.setItem(TOKEN_KEY,t); }
+async function api(p,o={}){const h={'Content-Type':'application/json'};const t=localStorage.getItem(TOKEN_KEY);if(t)h.Authorization='Bearer '+t;const r=await fetch(p,{headers:h,...o});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||r.status);return d;}
 async function refreshHead(){const me=await api('/api/me');if(me.loggedIn){$('#btn-login').classList.add('hidden');$('#header-mail').textContent=me.user.email;$('#header-mail').classList.remove('hidden');$('#btn-open-app').classList.remove('hidden');}else{$('#btn-login').classList.remove('hidden');}}
 function openAuth(){MODE='signup';$('#auth-title').textContent='Créer un compte';$('#auth-submit').textContent='Créer mon compte';$('#auth-toggle').textContent='Déjà un compte ? Se connecter';$('#modal').classList.remove('hidden');}
 $('#btn-login').onclick=()=>{MODE='login';$('#auth-title').textContent='Connexion';$('#auth-submit').textContent='Se connecter';$('#auth-toggle').textContent='Pas de compte ? Créer un compte';$('#modal').classList.remove('hidden');};
 $('#auth-toggle').onclick=e=>{e.preventDefault();if(MODE==='signup'){MODE='login';$('#auth-title').textContent='Connexion';$('#auth-submit').textContent='Se connecter';$('#auth-toggle').textContent='Pas de compte ? Créer un compte';}else{MODE='signup';$('#auth-title').textContent='Créer un compte';$('#auth-submit').textContent='Créer mon compte';$('#auth-toggle').textContent='Déjà un compte ? Se connecter';}};
 $$('[data-plan]').forEach(b=>b.onclick=async()=>{pendingPlan=b.dataset.plan;const me=await api('/api/me');if(!me.loggedIn){openAuth();return;}goPlan(pendingPlan);});
 async function goPlan(plan){if(plan==='decouverte'){location.href='/app';return;}try{const r=await api('/api/checkout',{method:'POST',body:JSON.stringify({plan})});if(r.url)location.href=r.url;else if(r.simulated){toast('✅ '+plan.charAt(0).toUpperCase()+plan.slice(1)+' activé (simulation)','ok');setTimeout(()=>location.href='/app',900);}else toast('Action impossible');}catch(e){toast('❌ '+e.message);}}
-$('#auth-submit').onclick=async()=>{const body={email:$('#f-email').value.trim(),password:$('#f-password').value,company:$('#f-company').value.trim()};try{if(MODE==='signup')await api('/api/signup',{method:'POST',body:JSON.stringify(body)});else await api('/api/login',{method:'POST',body:JSON.stringify(body)});$('#modal').classList.add('hidden');pendingPlan=null;location.href='/app';}catch(e){toast('❌ '+e.message);}};
+$('#auth-submit').onclick=async()=>{const body={email:$('#f-email').value.trim(),password:$('#f-password').value,company:$('#f-company').value.trim()};try{const r=(MODE==='signup')?await api('/api/signup',{method:'POST',body:JSON.stringify(body)}):await api('/api/login',{method:'POST',body:JSON.stringify(body)});saveToken(r.token);$('#modal').classList.add('hidden');pendingPlan=null;location.href='/app';}catch(e){toast('❌ '+e.message);}};
 refreshHead();
 </script>
 </body>
