@@ -1,4 +1,4 @@
-/* app.js — espace de travail Relancéo (SaaS) */
+/* app.js — espace de travail Paylora (SaaS) */
 const $=s=>document.querySelector(s);
 let toastT;function toast(m,ok){const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),3400);}
 const TOKEN_KEY='relanceo_token';

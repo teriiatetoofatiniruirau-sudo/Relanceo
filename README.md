@@ -1,4 +1,4 @@
-# Tresoléo — micro-SaaS (relances de paiement pour TPE françaises)
+# Paylora — micro-SaaS (relances de paiement pour TPE françaises)
 
 Version **web SaaS autonome** (sans Shopify) : comptes, données par utilisateur,
 abonnement Stripe réel, envoi d'emails. Réutilise le moteur et les contenus FR
@@ -11,7 +11,7 @@ du prototype (paliers, tons, anti-doublon).
 
 ## Fonctionnement (ce que l'app fait)
 1. Le dirigeant crée un compte (essai gratuit 14 j).
-2. Il importe ses factures (CSV ou à la main). Relancéo détecte automatiquement
+2. Il importe ses factures (CSV ou à la main). Paylora détecte automatiquement
    les factures en retard et leur niveau (palier 1/2/3 selon le retard).
 3. « Générer les relances dues » crée les brouillons rédigés en français, au ton
    choisi (courtois / commercial / ferme), sans jamais relancer deux fois le même niveau.

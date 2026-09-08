@@ -100,7 +100,7 @@ function generateDrafts(user) {
         niveau,
         tone: user.tone,
         settings: user,
-        paymentLink: 'https://pay.tresoleo.app/' + inv.numero,
+        paymentLink: 'https://pay.paylora.com/' + inv.numero,
       });
       user.reminders.push({
         id: store.uid(), invoiceId: inv.id, niveau,
