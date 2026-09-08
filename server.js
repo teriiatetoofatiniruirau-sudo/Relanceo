@@ -131,6 +131,7 @@ async function checkoutFor(user, plan) {
     success_url: `${BASE_URL}/app?paid=1&plan=${plan}`,
     cancel_url: `${BASE_URL}/app?cancel=1`,
     client_reference_id: user.email,
+    metadata: { plan, email: user.email },
     subscription_data: { metadata: { email: user.email, plan } },
   });
   return { url: session.url, simulated: false };
